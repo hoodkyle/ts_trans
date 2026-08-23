@@ -4,6 +4,9 @@ The user is directing development interactively.
 - Do not undertake large refactors, features, or architectural changes unless explicitly requested.
 - Most requests will be for small code snippets, individual functions, tests, wrappers, scripts, Dash components, or checks.
 - The user will often create or edit files manually from supplied snippets.
+- The user intends to build most transformer/model pieces personally as part of the learning exercise.
+- AI assistance should focus especially on constructing controlled test inputs, running tests, checking tensor shapes and dimensions, inspecting intermediate outputs, checking gradients and parameter counts, diagnosing errors, and verifying CPU/GPU behavior.
+- Do not implement the entire transformer stack or large portions of the learning exercise unless explicitly requested.
 - Do not anticipate several development phases ahead.
 - Keep implementations readable and mathematically transparent.
 - When implementing transformer components, preserve clear tensor shapes and avoid hiding important operations behind unnecessary abstractions.
@@ -12,6 +15,7 @@ Use this basic structure:
 ```text
 ts_trans/
 ├── AGENTS.md
+├── ARCHITECTURE.md
 ├── README.md
 ├── pyproject.toml
 ├── .gitignore
@@ -33,7 +37,7 @@ ts_trans
 
 ```
 Do not modify unrelated environments.
-The machine has a GPU available. GPU acceleration may be used when useful, but implementations should not become unnecessarily complex merely to use the GPU.
+The machine has 32 GB system RAM and an NVIDIA GeForce RTX 5060 Ti with 16 GB VRAM. GPU acceleration may be used when useful, but implementations should not become unnecessarily complex merely to use the GPU.
 Prefer PyTorch for transformer/model code unless instructed otherwise.
 Treat ts_trans as an installable Python package using the src/ layout.
 Package code belongs under:
