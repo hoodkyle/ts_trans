@@ -1,0 +1,54 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+.Python
+build/
+dist/
+.venv/
+venv/
+env/
+
+# micromamba / conda
+.conda/
+.mamba/
+conda-bld/
+*.conda
+*.tar.bz2
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Tests and tooling
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# Model artifacts and generated output
+*.ckpt
+*.pth
+*.pt
+*.safetensors
+output/*
+!output/.gitkeep
+
+# Local and large data
+data/*
+!data/.gitkeep
+*.csv
+*.parquet
+*.feather
+*.h5
+*.hdf5
+*.sqlite
+
+# Local environment/configuration files
+.env
+.env.*
+
