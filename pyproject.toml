@@ -7,7 +7,10 @@ name = "ts_trans"
 version = "0.1.0"
 description = "An educational time-series transformer project"
 requires-python = ">=3.11"
-dependencies = ["numpy"]
+dependencies = [
+    "numpy",
+    "torch==2.11.0",
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]
