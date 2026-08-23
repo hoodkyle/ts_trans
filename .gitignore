@@ -41,7 +41,12 @@ output/*
 # Local and large data
 data/*
 !data/.gitkeep
+!data/testdata/
+data/testdata/*
+!data/testdata/*.csv
+!data/testdata/README.md
 *.csv
+!data/testdata/*.csv
 *.parquet
 *.feather
 *.h5
@@ -51,4 +56,3 @@ data/*
 # Local environment/configuration files
 .env
 .env.*
-
