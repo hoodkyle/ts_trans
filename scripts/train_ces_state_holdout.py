@@ -36,6 +36,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA_PATH = ROOT / "data" / "real" / "ces_state_total_nonfarm.csv"
 SUMMARY_PATH = ROOT / "output" / "train_ces_state_holdout_summary.txt"
 STATE_METRICS_PATH = ROOT / "output" / "train_ces_state_holdout_by_state.csv"
+DIAGNOSTICS_PATH = ROOT / "output" / "train_ces_state_holdout_diagnostics.csv"
 
 
 def _metrics(actual: np.ndarray, prediction: np.ndarray) -> dict[str, float]:
@@ -341,6 +342,24 @@ def main() -> None:
     sample["ar1_level_error"] = sample["ar1_level"] - sample["actual_level"]
     sample["rw_level_error"] = sample["rw_level"] - sample["actual_level"]
     sample = sample.sort_values(["state_fips", "forecast_date"], kind="mergesort").head(5)
+    diagnostics = metadata.copy()
+    diagnostics["rw_log_diff"] = rw_growth
+    diagnostics["transformer_log_diff"] = transformer_growth
+    diagnostics["ar1_log_diff"] = ar1_growth
+    diagnostics["rw_level"] = level_predictions["rw"]
+    diagnostics["transformer_level"] = level_predictions["transformer"]
+    diagnostics["ar1_level"] = level_predictions["ar1"]
+    diagnostics["transformer_growth_error"] = transformer_growth - actual_growth
+    diagnostics["ar1_growth_error"] = ar1_growth - actual_growth
+    diagnostics["rw_growth_error"] = rw_growth - actual_growth
+    diagnostics["transformer_level_error"] = level_predictions["transformer"] - actual_level
+    diagnostics["ar1_level_error"] = level_predictions["ar1"] - actual_level
+    diagnostics["rw_level_error"] = level_predictions["rw"] - actual_level
+    diagnostics["train_mean_log_diff"] = scaling_by_row["mean"].to_numpy()
+    diagnostics["train_std_log_diff"] = scaling_by_row["std"].to_numpy()
+    diagnostics["transformer_scaled_log_diff"] = transformer_scaled
+    diagnostics = diagnostics.sort_values(["state_fips", "forecast_date"], kind="mergesort")
+    diagnostics.to_csv(DIAGNOSTICS_PATH, index=False)
     sample_columns = [
         "state_name", "forecast_date", "previous_level", "actual_level", "actual_log_diff",
         "transformer_log_diff", "ar1_log_diff", "transformer_level", "ar1_level", "rw_level",
@@ -367,6 +386,7 @@ def main() -> None:
     print(sample[sample_columns].to_string(index=False))
     print(f"summary: {SUMMARY_PATH}")
     print(f"state metrics: {STATE_METRICS_PATH}")
+    print(f"diagnostics: {DIAGNOSTICS_PATH}")
 
 
 if __name__ == "__main__":
