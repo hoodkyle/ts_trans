@@ -3,6 +3,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import pytest
 
 from ts_trans.dataprep import make_panel_windows, prepare_panel
 
@@ -80,3 +81,34 @@ def test_ar1_regeneration_is_reproducible_from_fixed_seed():
     second, second_parameters = generate_ar1(np.random.default_rng(SEED), dates)
     pd.testing.assert_frame_equal(first, second)
     pd.testing.assert_frame_equal(first_parameters, second_parameters)
+
+
+def test_ar1_recurrence_uses_the_pre_sample_state():
+    dates = pd.date_range("2000-01", periods=N_OBSERVATIONS, freq="MS")
+    generation_rng = np.random.default_rng(SEED)
+    generator.generate_linear(generation_rng, dates)
+    generator.generate_sinusoidal(generation_rng, dates)
+    generated, parameters = generate_ar1(generation_rng, dates)
+
+    replay_rng = np.random.default_rng(SEED)
+    generator.generate_linear(replay_rng, dates)
+    generator.generate_sinusoidal(replay_rng, dates)
+    alpha = replay_rng.uniform(-0.2, 0.2, N_PANELS)
+    rho = replay_rng.uniform(0.55, 0.90, N_PANELS)
+    sigma = replay_rng.uniform(0.05, 0.20, N_PANELS)
+    innovations = replay_rng.normal(0.0, sigma[:, None], size=(N_PANELS, N_OBSERVATIONS))
+
+    panel_index = 50
+    panel_values = generated.loc[generated["panel"] == f"P{panel_index:03d}", "value"].to_numpy()
+    pre_sample = alpha[panel_index] / (1.0 - rho[panel_index])
+    assert parameters.loc[panel_index, "alpha"] == alpha[panel_index]
+    assert parameters.loc[panel_index, "rho"] == rho[panel_index]
+    assert parameters.loc[panel_index, "sigma"] == sigma[panel_index]
+    assert panel_values[0] == pytest.approx(
+        alpha[panel_index] + rho[panel_index] * pre_sample + innovations[panel_index, 0]
+    )
+    previous = pre_sample
+    for t in range(6):
+        expected = alpha[panel_index] + rho[panel_index] * previous + innovations[panel_index, t]
+        assert panel_values[t] == pytest.approx(expected)
+        previous = panel_values[t]
