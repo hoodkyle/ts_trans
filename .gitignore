@@ -41,6 +41,9 @@ output/*
 # Local and large data
 data/*
 !data/.gitkeep
+# Downloaded raw BLS responses and real-data outputs remain local.
+data/raw/
+data/real/
 !data/testdata/
 data/testdata/*
 !data/testdata/*.csv

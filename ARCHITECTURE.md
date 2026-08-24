@@ -129,3 +129,11 @@ Panel scaling follows the preparation flow:
 `raw panel -> validation -> per-panel scaling -> window construction -> model -> inverse scaling of forecasts`
 
 Scaling parameters are computed and retained separately for each cross-sectional series so forecasts can be returned to original units.
+
+## External real-data acquisition
+
+Real-data workflows keep the source boundary explicit:
+
+`external source -> raw acquisition -> audited normalized long form -> downstream selection/cleaning -> existing dataprep`
+
+The BLS CES acquisition script preserves missing or unpublished source observations. Missing observations are never converted to zero; downstream dataprep may reject incomplete series rather than silently filling them.
