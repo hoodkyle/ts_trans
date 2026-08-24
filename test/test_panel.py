@@ -91,3 +91,23 @@ def test_input_is_not_mutated_and_window_length_validation_is_per_series():
     assert source.equals(original)
     with pytest.raises(ValueError, match="more than window_length"):
         make_panel_windows(source, ["state"], "date", "value", "monthly", 5)
+
+
+def test_empty_panel_is_rejected_before_window_construction():
+    empty = pd.DataFrame(columns=["state", "date", "value"])
+    with pytest.raises(ValueError, match="at least one row"):
+        make_panel_windows(empty, ["state"], "date", "value", "monthly", 3)
+
+
+@pytest.mark.parametrize(
+    "cross_section_cols, time_col, value_col",
+    [
+        (["state"], "value", "value"),
+        (["date"], "date", "value"),
+        (["value"], "date", "value"),
+        (["state", "state"], "date", "value"),
+    ],
+)
+def test_column_role_collisions_are_rejected(cross_section_cols, time_col, value_col):
+    with pytest.raises(ValueError, match="distinct|duplicate"):
+        prepare_panel(monthly_panel(), cross_section_cols, time_col, value_col, "monthly")

@@ -21,6 +21,8 @@ def _as_cross_section_cols(cross_section_cols: Iterable[str]) -> list[str]:
     columns = list(cross_section_cols)
     if not columns:
         raise ValueError("cross_section_cols must contain at least one column")
+    if len(set(columns)) != len(columns):
+        raise ValueError("cross_section_cols must not contain duplicate columns")
     return columns
 
 
@@ -44,6 +46,10 @@ def prepare_panel(
     if not isinstance(df, pd.DataFrame):
         raise TypeError("df must be a pandas DataFrame")
     cross_section_cols = _as_cross_section_cols(cross_section_cols)
+    if len(set(cross_section_cols + [time_col, value_col])) != len(cross_section_cols) + 2:
+        raise ValueError("cross_section_cols, time_col, and value_col must be distinct columns")
+    if df.empty:
+        raise ValueError("df must contain at least one row")
     required = cross_section_cols + [time_col, value_col]
     missing = [column for column in required if column not in df.columns]
     if missing:
