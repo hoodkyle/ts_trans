@@ -123,3 +123,9 @@ The canonical raw training input is a long-form DataFrame:
 `long-form DataFrame -> panel validation/canonicalization -> group by cross-section -> regular ordered series -> supervised windows -> X, y, metadata`
 
 Each preparation call uses one explicit frequency (`monthly` or `quarterly`). Mixed-frequency input is out of scope for now. Windows are constructed independently within each cross-sectional unit and never cross between units. Missing periods are rejected rather than imputed.
+
+Panel scaling follows the preparation flow:
+
+`raw panel -> validation -> per-panel scaling -> window construction -> model -> inverse scaling of forecasts`
+
+Scaling parameters are computed and retained separately for each cross-sectional series so forecasts can be returned to original units.
