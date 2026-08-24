@@ -115,3 +115,11 @@ The architecture should avoid assumptions that require large-memory hardware; sm
 Do not build a generalized forecasting framework at the outset. Add capabilities only when they support a specific learning goal.
 
 Possible later additions include multiple heads, multiple blocks, richer embeddings, calendar features, multivariate inputs, larger datasets, training utilities, diagnostic plots, or Dash interfaces, but none are part of the initial architecture unless explicitly requested.
+
+## Canonical panel data preparation
+
+The canonical raw training input is a long-form DataFrame:
+
+`long-form DataFrame -> panel validation/canonicalization -> group by cross-section -> regular ordered series -> supervised windows -> X, y, metadata`
+
+Each preparation call uses one explicit frequency (`monthly` or `quarterly`). Mixed-frequency input is out of scope for now. Windows are constructed independently within each cross-sectional unit and never cross between units. Missing periods are rejected rather than imputed.
