@@ -47,6 +47,9 @@ data/testdata/*
 !data/testdata/README.md
 *.csv
 !data/testdata/*.csv
+!data/testdata/panels/
+!data/testdata/panels/*.csv
+!data/testdata/panels/README.md
 *.parquet
 *.feather
 *.h5
